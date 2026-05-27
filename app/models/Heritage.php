@@ -1,20 +1,17 @@
 <?php
 
-// =============================================
+
 // CLASSE UTILITAIRE
 // Hérite de Vehicule
-// Ajoute la notion de charge maximale
-// =============================================
+
 class Utilitaire extends Vehicule {
 
     // Propriété spécifique aux utilitaires
     private float $charge_max; // en tonnes (ex: 1.5 pour 1.5 tonne)
 
-    // =====================
+    
     // CONSTRUCTEUR
-    // =====================
-    // On reprend TOUS les paramètres de Vehicule
-    // et on ajoute charge_max en plus
+   
     public function __construct(
         int    $id,
         string $immatriculation,
@@ -42,16 +39,16 @@ class Utilitaire extends Vehicule {
         $this->charge_max = $charge_max;
     }
 
-    // =====================
+    
     // GETTER
-    // =====================
+    
     public function getChargeMax(): float {
         return $this->charge_max;
     }
 
-    // =====================
+    
     // MÉTHODE MÉTIER
-    // =====================
+    
     // Vérifie si l'utilitaire peut porter un certain poids
     public function peutPorter(float $poids_tonnes): bool {
         return $poids_tonnes <= $this->charge_max;
@@ -59,19 +56,18 @@ class Utilitaire extends Vehicule {
 }
 
 
-// =============================================
+
 // CLASSE VOITUREELECTRIQUE
 // Hérite de Vehicule
-// Ajoute la notion d'autonomie
-// =============================================
+
 class VoitureElectrique extends Vehicule {
 
     // Propriété spécifique aux électriques
     private int $autonomie_km; // autonomie maximale en km
 
-    // =====================
+    
     // CONSTRUCTEUR
-    // =====================
+   
     public function __construct(
         int    $id,
         string $immatriculation,
@@ -82,7 +78,7 @@ class VoitureElectrique extends Vehicule {
         int    $autonomie_km,          // paramètre en plus
         string $statut = "Disponible"
     ) {
-        // "type" est forcé à "electrique" automatiquement
+        
         parent::__construct(
             $id,
             $immatriculation,
@@ -97,24 +93,18 @@ class VoitureElectrique extends Vehicule {
         $this->autonomie_km = $autonomie_km;
     }
 
-    // =====================
     // GETTER
-    // =====================
     public function getAutonomie(): int {
         return $this->autonomie_km;
     }
 
-    // =====================
     // MÉTHODES MÉTIER
-    // =====================
-
     // Vérifie si la voiture peut faire un trajet sans recharger
     public function autonomieSuffisante(int $distance_km): bool {
         return $this->autonomie_km >= $distance_km;
     }
 
     // Retourne le pourcentage de batterie restant après un trajet
-    // Utile pour la fiche de retour
     public function batterieRestante(int $distance_parcourue): float {
         if ($distance_parcourue >= $this->autonomie_km) {
             return 0.0; // batterie vide
