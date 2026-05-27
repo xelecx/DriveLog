@@ -1,6 +1,17 @@
 <?php
 
 class Reservation {
+
+    // =====================
+    // CONNEXION BDD
+    // =====================
+    private static function getConnection(): PDO {
+        return getDB();
+    }
+
+    // =====================
+    // CONSTRUCTEUR
+    // =====================
     private int     $id;
     private int     $id_vehicule;
     private int     $id_user;
@@ -33,9 +44,30 @@ class Reservation {
         $this->incident    = $incident;
     }
 
+   
+    // GETTERS ET SETTERS
+    
+    public function getId(): int          { return $this->id; }
+    public function getIdVehicule(): int  { return $this->id_vehicule; }
+    public function getIdUser(): int      { return $this->id_user; }
+    public function getDateDebut(): string { return $this->date_debut; }
+    public function getDateFin(): string  { return $this->date_fin; }
+    public function getKmDepart(): ?int   { return $this->km_depart; }
+    public function getKmRetour(): ?int   { return $this->km_retour; }
+    public function getCarburant(): ?int  { return $this->carburant; }
+    public function getIncident(): ?string { return $this->incident; }
+
+    public function setKmDepart(int $km): void   { $this->km_depart = $km; }
+    public function setKmRetour(int $km): void    { $this->km_retour = $km; }
+    public function setCarburant(int $c): void    { $this->carburant = $c; }
+    public function setIncident(string $i): void  { $this->incident = $i; }
+
+   
+    
+
     // Vérifie si un véhicule est dispo sur une plage de dates
     public static function vehiculeDisponible(int $id_vehicule, string $date_debut, string $date_fin): bool {
-        $pdo  = getDB();
+        $pdo  = self::getConnection();
         $stmt = $pdo->prepare("
             SELECT COUNT(*) FROM reservations
             WHERE id_vehicule = ?
@@ -48,9 +80,10 @@ class Reservation {
 
     // Crée une réservation
     public static function create(array $data): bool {
+        $pdo = self::getConnection();
+
         // Vérifie que le véhicule n'est pas en panne
-        $pdo     = getDB();
-        $stmt    = $pdo->prepare("SELECT statut FROM vehicules WHERE id = ?");
+        $stmt = $pdo->prepare("SELECT statut FROM vehicules WHERE id = ?");
         $stmt->execute([$data['id_vehicule']]);
         $vehicule = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -58,7 +91,7 @@ class Reservation {
             throw new Exception("Ce véhicule est en panne, réservation impossible.");
         }
 
-        // Vérifie la disponibilité
+        // Vérifie la disponibilité sur les dates
         if (!self::vehiculeDisponible($data['id_vehicule'], $data['date_debut'], $data['date_fin'])) {
             throw new Exception("Ce véhicule est déjà réservé sur cette période.");
         }
@@ -78,8 +111,9 @@ class Reservation {
 
     // Enregistre le retour du véhicule
     public static function enregistrerRetour(int $id, array $data): bool {
+        $pdo  = self::getConnection();
+
         // Vérifie que km retour >= km départ
-        $pdo  = getDB();
         $stmt = $pdo->prepare("SELECT km_depart FROM reservations WHERE id = ?");
         $stmt->execute([$id]);
         $resa = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -102,8 +136,8 @@ class Reservation {
     }
 
     // Historique des trajets d'un utilisateur
-    public static function getByUser(int $id_user): array {
-        $pdo  = getDB();
+    public static function findByUser(int $id_user): array {
+        $pdo  = self::getConnection();
         $stmt = $pdo->prepare("
             SELECT r.*, v.modele, v.immatriculation 
             FROM reservations r
@@ -116,8 +150,8 @@ class Reservation {
     }
 
     // Toutes les réservations (pour le gestionnaire)
-    public static function getAll(): array {
-        $pdo  = getDB();
+    public static function findAll(): array {
+        $pdo  = self::getConnection();
         $stmt = $pdo->query("
             SELECT r.*, v.modele, v.immatriculation, u.nom
             FROM reservations r
@@ -126,5 +160,14 @@ class Reservation {
             ORDER BY r.date_debut DESC
         ");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Récupère une réservation par son ID
+    public static function findById(int $id): ?array {
+        $pdo  = self::getConnection();
+        $stmt = $pdo->prepare("SELECT * FROM reservations WHERE id = ?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result ?: null;
     }
 }
