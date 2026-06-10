@@ -3,7 +3,7 @@
 ?>
 
 <div class="card">
-    <h2>📊 Statistiques de la flotte</h2>
+    <h2>Statistiques de la flotte</h2>
 
     <h3 style="margin:20px 0 12px; color:#1a1a2e;">Taux d'utilisation par véhicule</h3>
     <table>

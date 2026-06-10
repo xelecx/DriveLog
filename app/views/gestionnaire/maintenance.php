@@ -2,13 +2,13 @@
 ?>
 
 <div class="card">
-    <h2>🔧 Suivi de maintenance</h2>
+    <h2>Suivi de maintenance</h2>
 
     <?php if (empty($vehicules)): ?>
         <div class="alert-succes">✓ Aucun véhicule ne nécessite d'entretien pour le moment.</div>
     <?php else: ?>
         <p style="margin-bottom:16px; color:#c0392b;">
-            ⚠️ <?= count($vehicules) ?> véhicule(s) nécessitent une révision.
+             <?= count($vehicules) ?> véhicule(s) nécessitent une révision.
         </p>
         <table>
             <thead>
@@ -33,7 +33,7 @@
                             +<?= number_format($v['km_actuel'] - $v['km_dernier_entretien'], 0, ',', ' ') ?> km
                         </td>
                         <td>
-                            <span class="badge badge-en-panne">⚠️ Révision requise</span>
+                            <span class="badge badge-en-panne">Révision requise</span>
                         </td>
                         <td style="display:flex; gap:6px;">
                             <a href="/drivelog/public/index.php?page=gestionnaire/maintenance/valider&id=<?= $v['id'] ?>"
