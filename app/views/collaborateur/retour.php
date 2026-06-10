@@ -1,3 +1,7 @@
+<?php
+/** @var array $reservation */
+?>
+
 <div class="card" style="max-width: 600px; margin: 0 auto;">
     <h2>📝 Fiche de retour</h2>
 
